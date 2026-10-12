@@ -2040,6 +2040,27 @@ describe("doctor command", () => {
     expect(parsed.checks.agentMail.status).toBe("skipped");
   });
 
+  // arosl fork (FORK.md): the "ntm" check runs nhm.
+  it("doctor --json checks nhm in ntm's slot", async () => {
+    const binDir = join(tmpdir(), `brenner-test-nhm-${randomUUID()}`);
+    mkdirSync(binDir, { recursive: true });
+    const nhmPath = join(binDir, "nhm");
+    writeFileSync(nhmPath, '#!/bin/sh\n[ "$1" = version ] && echo "nhm 0.1.2"\n', { mode: 0o755 });
+    try {
+      const result = await runCli(["doctor", "--json", "--skip-cass", "--skip-cm"], {
+        env: { PATH: `${binDir}:${process.env.PATH ?? ""}` },
+      });
+      const parsed = JSON.parse(result.stdout) as {
+        checks: Record<string, { status: string; path: string | null; verifyCommand: string | null }>;
+      };
+      expect(parsed.checks.ntm.status).toBe("ok");
+      expect(parsed.checks.ntm.path).toBe(nhmPath);
+      expect(parsed.checks.ntm.verifyCommand).toBe("nhm version");
+    } finally {
+      rmSync(binDir, { recursive: true, force: true });
+    }
+  });
+
   it("doctor --json includes agent CLI checks", async () => {
     const result = await runCli(["doctor", "--json", "--skip-ntm", "--skip-cass", "--skip-cm"]);
 

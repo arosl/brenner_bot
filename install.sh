@@ -423,7 +423,8 @@ install_toolchain() {
   if [[ "$SKIP_NTM" == "true" ]]; then
     log_info "Skipping ntm installation (--skip-ntm)"
   else
-    install_ntm_release "$manifest"
+    # arosl fork: the cockpit runs nhm in ntm's place (FORK.md); ntm is not installed.
+    log_info "Not installing ntm: this brenner runs nhm (https://github.com/arosl/nhm), which ACFS installs"
   fi
 
   if [[ "$SKIP_CASS" == "true" ]]; then
@@ -463,7 +464,7 @@ verify_toolchain() {
   }
 
   if [[ "$SKIP_NTM" != "true" ]]; then
-    verify_command "ntm" ntm deps -v
+    verify_command "nhm" nhm version
   fi
 
   if [[ "$SKIP_CASS" != "true" ]]; then
@@ -815,7 +816,7 @@ Options:
   --dry-run            Show what would be done without doing it
   --verbose            Show debug output
   --skip-brenner       Skip brenner binary installation
-  --skip-ntm           Skip ntm installation (Unix-only tool)
+  --skip-ntm           Skip the nhm check (this fork runs nhm in ntm's place)
   --skip-cass          Skip cass installation
   --skip-cm            Skip cm installation
   -h, --help           Show this help

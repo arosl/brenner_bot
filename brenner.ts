@@ -2403,8 +2403,9 @@ async function main(): Promise<void> {
     const warnings: string[] = [];
 
     // Resolve tool checks (default commands if manifest unavailable)
+    // arosl fork: the "ntm" check runs nhm, which takes ntm's place (FORK.md).
     const defaultVerify: Record<string, string> = {
-      ntm: "ntm version",
+      ntm: "nhm version",
       cass: "cass health",
       cm: "cm --version",
     };
@@ -2454,14 +2455,16 @@ async function main(): Promise<void> {
       opts: { skip: boolean; required: boolean },
     ): void => {
       const meta = manifestTools?.[tool];
-      const verifyCommand = meta?.verifyCommand ?? defaultVerify[tool] ?? null;
+      // The toolchain manifest's ntm line (ntm deps -v) does not apply to nhm.
+      const verifyCommand =
+        tool === "ntm" ? defaultVerify.ntm : (meta?.verifyCommand ?? defaultVerify[tool] ?? null);
 
       if (opts.skip) {
         checks[tool] = { status: "skipped", path: null, verifyCommand, exitCode: null };
         return;
       }
 
-      const binPath = Bun.which(tool);
+      const binPath = Bun.which(tool === "ntm" ? "nhm" : tool);
       if (!binPath) {
         checks[tool] = {
           status: "missing",
@@ -2622,7 +2625,8 @@ async function main(): Promise<void> {
     const buildInfo = getBrennerBuildInfo();
     const currentSemver = normalizeSemverTag(buildInfo.version);
 
-    const owner = "Dicklesworthstone";
+    // arosl fork: upgrade to the fork's releases (FORK.md).
+    const owner = "arosl";
     const repo = "brenner_bot";
 
     const suggestableCurrentVersion =

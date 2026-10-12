@@ -17,6 +17,10 @@ them small, and merges upstream regularly. It adds no features of its own.
 | `brenner.ts`, `cockpit start` | runs `nhm spawn <thread> …` and `nhm send <thread> --all <msg>` instead of the same `ntm` commands; the dry-run plan and the two error messages say `nhm` |
 | `brenner.test.ts` | one test: a dry run plans `nhm spawn RS-… --cc=1 --cod=1 --agy=1` and `nhm send RS-… --all <msg>` |
 | `install.sh` | `REPO_OWNER="arosl"`: it installs the fork's release binary, which has the change above |
+| `install.sh`, the toolchain step | ntm is not installed; it says that nhm comes from ACFS (or arosl/nhm). `--verify` checks `nhm version`; `--skip-ntm` skips that check |
+| `brenner.ts`, `doctor` | the `ntm` check looks for `nhm` and runs `nhm version`; the key stays `ntm` |
+| `brenner.ts`, `upgrade` | the printed installer commands name `arosl/brenner_bot` |
+| `brenner.test.ts` | one test: `doctor --json` finds a fake `nhm` in the `ntm` check |
 | `.github/workflows/notify-acfs.yml` | the job runs only in upstream's repository; the fork has no `ACFS_NOTIFY_TOKEN`, and the ACFS fork pins brenner by tag |
 | `FORK.md` | this file |
 
@@ -55,15 +59,18 @@ These names stay, so brenner's interface does not change: the flags
   it starts an agent. Exit 3 means admission refused; `brenner` reports the
   failure with nhm's message.
 
-## Not changed yet (known gaps)
+## Not changed, on purpose
 
-- `brenner doctor` checks `ntm version`. On an ACFS host without ntm, use
-  `brenner doctor --skip-ntm`.
-- `install.sh` and `specs/toolchain.manifest.json` install ntm. ACFS installs
-  nhm itself (`stack.nhm`), so ACFS runs brenner's installer with `--skip-ntm`.
-- The docs and the web tutorial still name ntm and tmux.
+- **The docs and the web tutorial** (README, `specs/`, `apps/web`) still name
+  ntm and tmux. Renaming them would conflict with nearly every upstream
+  merge, and the fork follows upstream closely. Read "ntm" there as nhm, as
+  the delta above does.
+- **`specs/toolchain.manifest.json`** keeps its ntm entry. The installer and
+  `doctor` no longer use it for ntm's place.
+- **The `--skip-ntm` and `--ntm-args` flags and the `ntm` JSON keys** keep
+  their names, so scripts that call brenner keep working.
 
-Each gap gets a bead before it changes here, so the delta stays listed.
+A change to this list gets a bead first, so the delta stays listed.
 
 ## Syncing with upstream
 
