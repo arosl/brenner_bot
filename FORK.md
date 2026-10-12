@@ -28,7 +28,13 @@ them small, and merges upstream regularly. It adds no features of its own.
 
 The fork tags `v<upstream version>-nhm.<n>` (for example `v0.4.1-nhm.1`) on
 its `main`. Upstream's unchanged `release.yml` builds the binaries and their
-`.sha256` files for the tag. The ACFS fork pins the tagged `install.sh` in
+`.sha256` files for the tag. On this fork, a tag push starts no workflow
+run, so a release is made by hand: dispatch `release.yml` on the tag
+(`gh workflow run release.yml --ref <tag>`), check that each binary and
+`install.sh` match their `.sha256` files and that `install.sh` matches the
+tagged source, then publish the run's `brenner-dist-<tag>` artifact as the
+tag's release. A tag without a release is never referenced (as
+`v0.4.1-nhm.2`, a tag on the same commit as `v0.4.1-nhm.1`). The ACFS fork pins the tagged `install.sh` in
 `checksums.yaml` and runs it with `--skip-ntm`, since ACFS installs nhm
 itself.
 
