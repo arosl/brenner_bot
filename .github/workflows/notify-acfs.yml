@@ -28,6 +28,9 @@ env:
 
 jobs:
   compute-and-notify:
+    # arosl fork: the fork has no ACFS_NOTIFY_TOKEN, and the ACFS fork pins
+    # brenner by tag (FORK.md), so only upstream notifies.
+    if: github.repository == 'Dicklesworthstone/brenner_bot'
     runs-on: ubuntu-latest
     permissions:
       contents: read

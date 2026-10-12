@@ -2,7 +2,7 @@
 # Brenner Bot Installer
 #
 # Usage:
-#   curl -fsSL https://raw.githubusercontent.com/Dicklesworthstone/brenner_bot/main/install.sh | bash
+#   curl -fsSL https://raw.githubusercontent.com/arosl/brenner_bot/main/install.sh | bash
 #   curl -fsSL ... | bash -s -- --easy-mode --verify
 #
 # For CI/offline:
@@ -17,7 +17,8 @@ set -euo pipefail
 # Constants
 # -----------------------------------------------------------------------------
 
-REPO_OWNER="Dicklesworthstone"
+# arosl fork: the fork's releases carry the nhm cockpit (FORK.md).
+REPO_OWNER="arosl"
 REPO_NAME="brenner_bot"
 TOOL_NAME="brenner"
 

@@ -16,7 +16,17 @@ them small, and merges upstream regularly. It adds no features of its own.
 |---|---|
 | `brenner.ts`, `cockpit start` | runs `nhm spawn <thread> …` and `nhm send <thread> --all <msg>` instead of the same `ntm` commands; the dry-run plan and the two error messages say `nhm` |
 | `brenner.test.ts` | one test: a dry run plans `nhm spawn RS-… --cc=1 --cod=1 --agy=1` and `nhm send RS-… --all <msg>` |
+| `install.sh` | `REPO_OWNER="arosl"`: it installs the fork's release binary, which has the change above |
+| `.github/workflows/notify-acfs.yml` | the job runs only in upstream's repository; the fork has no `ACFS_NOTIFY_TOKEN`, and the ACFS fork pins brenner by tag |
 | `FORK.md` | this file |
+
+## Releases
+
+The fork tags `v<upstream version>-nhm.<n>` (for example `v0.4.1-nhm.1`) on
+its `main`. Upstream's unchanged `release.yml` builds the binaries and their
+`.sha256` files for the tag. The ACFS fork pins the tagged `install.sh` in
+`checksums.yaml` and runs it with `--skip-ntm`, since ACFS installs nhm
+itself.
 
 The change is a rename. nhm takes ntm's grammar for these two calls, so
 brenner's arguments stay as they are: `--ntm-args` (default
