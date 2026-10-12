@@ -396,6 +396,44 @@ describe("cockpit start", () => {
     expect(parsed.ntm.broadcast).toBeNull();
     expect(parsed.kickoff.map((k) => k.to)).toEqual(["BlueLake", "PurpleMountain", "RedForest"]);
   });
+
+  // arosl fork (FORK.md): the cockpit runs nhm with ntm's grammar.
+  it("plans nhm spawn and nhm send with ntm's arguments", async () => {
+    const excerptPath = join(tmpdir(), `brenner-test-excerpt-${randomUUID()}.md`);
+    writeFileSync(excerptPath, "§1 — test excerpt", "utf8");
+
+    const result = await runCli([
+      "cockpit",
+      "start",
+      "--thread-id",
+      "RS-20251231-test",
+      "--sender",
+      "TestSender",
+      "--to",
+      "BlueLake,PurpleMountain,RedForest",
+      "--role-map",
+      "BlueLake=hypothesis_generator,PurpleMountain=test_designer,RedForest=adversarial_critic",
+      "--excerpt-file",
+      excerptPath,
+      "--question",
+      "What is the question?",
+      "--dry-run",
+      "--json",
+    ]);
+
+    expect(result.exitCode).toBe(0);
+    const parsed = JSON.parse(result.stdout) as {
+      ntm: { spawn: { argv: string[] }; broadcast: { argv: string[] } };
+    };
+    expect(parsed.ntm.spawn.argv).toEqual(["nhm", "spawn", "RS-20251231-test", "--cc=1", "--cod=1", "--agy=1"]);
+    expect(parsed.ntm.broadcast.argv).toEqual([
+      "nhm",
+      "send",
+      "RS-20251231-test",
+      "--all",
+      "Please check your Agent Mail inbox for thread: RS-20251231-test",
+    ]);
+  });
 });
 
 // ============================================================================

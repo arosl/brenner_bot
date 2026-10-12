@@ -7186,8 +7186,9 @@ ${JSON.stringify(delta, null, 2)}
       asStringFlag(flags, "broadcast-message") ??
       `Please check your Agent Mail inbox for thread: ${threadId}`;
 
-    const ntmSpawnArgv = ["ntm", "spawn", threadId, ...splitCommand(ntmArgsRaw)];
-    const ntmSendArgv = ["ntm", "send", threadId, "--all", broadcastMessage];
+    // arosl fork: nhm (arosl/nhm) in ntm's place, with ntm's grammar (FORK.md).
+    const ntmSpawnArgv = ["nhm", "spawn", threadId, ...splitCommand(ntmArgsRaw)];
+    const ntmSendArgv = ["nhm", "send", threadId, "--all", broadcastMessage];
 
     const kickoffPreview = composeKickoffMessages(kickoffConfig).map((m) => ({
       to: m.to,
@@ -7225,7 +7226,7 @@ ${JSON.stringify(delta, null, 2)}
         lines.push(`project: ${projectKey}`);
         lines.push("");
         if (!skipNtm) {
-          lines.push("ntm spawn:");
+          lines.push("nhm spawn:");
           lines.push(`  ${ntmSpawnArgv.join(" ")}`);
           lines.push("");
         }
@@ -7235,7 +7236,7 @@ ${JSON.stringify(delta, null, 2)}
         }
         lines.push("");
         if (!skipBroadcast) {
-          lines.push("ntm broadcast:");
+          lines.push("nhm broadcast:");
           lines.push(`  ${ntmSendArgv.join(" ")}`);
           lines.push("");
         }
@@ -7256,7 +7257,7 @@ ${JSON.stringify(delta, null, 2)}
         stderr: proc.stderr.toString(),
       });
       if ((proc.exitCode ?? 1) !== 0) {
-        throw new Error(`ntm spawn failed: ${proc.stderr.toString().trim()}`);
+        throw new Error(`nhm spawn failed: ${proc.stderr.toString().trim()}`);
       }
     }
 
@@ -7301,7 +7302,7 @@ ${JSON.stringify(delta, null, 2)}
         stderr: proc.stderr.toString(),
       });
       if ((proc.exitCode ?? 1) !== 0) {
-        throw new Error(`ntm send failed: ${proc.stderr.toString().trim()}`);
+        throw new Error(`nhm send failed: ${proc.stderr.toString().trim()}`);
       }
     }
 
