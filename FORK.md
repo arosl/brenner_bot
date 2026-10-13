@@ -22,6 +22,7 @@ them small, and merges upstream regularly. It adds no features of its own.
 | `brenner.ts`, `upgrade` | the printed installer commands name `arosl/brenner_bot` |
 | `brenner.test.ts` | one test: `doctor --json` finds a fake `nhm` in the `ntm` check |
 | `.github/workflows/notify-acfs.yml` | the job runs only in upstream's repository; the fork has no `ACFS_NOTIFY_TOKEN`, and the ACFS fork pins brenner by tag |
+| `.beads/` | not tracked, except its `.gitignore`, which ignores everything: the fork keeps its bead queue local, because br writes the local user name and checkout path into every bead and the fork is public. The fork's work is tracked there, not in ACFS's queue |
 | `FORK.md` | this file |
 
 ## Releases
@@ -80,8 +81,18 @@ A change to this list gets a bead first, so the delta stays listed.
 
 ## Syncing with upstream
 
+Merge in a worktree, never in the checkout where br runs: when upstream
+changes its bead files, the merge writes them over the local bead queue.
+
 ```bash
 git fetch upstream
-git merge upstream/main     # keep this file and the delta above; resolve by hand
+git worktree add --detach <scratch>/brenner-sync main
+cd <scratch>/brenner-sync && bun install --frozen-lockfile
+git merge --no-commit upstream/main   # keep this file and the delta above; resolve by hand
+git rm --cached -r --ignore-unmatch .beads ':!.beads/.gitignore'   # if the merge brought bead files in
 bun test brenner.test.ts
+git commit
 ```
+
+Then, in the main checkout, `git merge --ff-only <merge commit>`, and
+remove the worktree.
